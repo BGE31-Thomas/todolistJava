@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exemple.projet.api.exceptions.ResourceNotFoundException;
@@ -34,8 +32,8 @@ public class TacheController {
     private UserRepository userRepository;
 
     @GetMapping("/users/{userId}/taches")
-    public List <Tache> getTachesByUtilisateur(@PathVariable(value = "postId") int userId) {
-        return tacheRepository.findByUtilisateurId(userId);
+    public List <Tache> getTachesByUtilisateur(@PathVariable(value = "userId") int userId) {
+        return tacheRepository.findByUtilisateurId(userId,Sort.by("id").descending());
     }
 
     @PostMapping("/users/{userId}/taches")
@@ -57,6 +55,21 @@ public class TacheController {
 
         return tacheRepository.findById(tacheId).map(tache -> {
             tache.setTitle(tacheRequest.getTitle());
+            tache.setDescription(tacheRequest.getDescription());
+            return tacheRepository.save(tache);
+        }).orElseThrow(() -> new ResourceNotFoundException("tache.id non trouvée"));
+    }
+
+    @PutMapping("/status/{userId}/{tacheId}")
+    public Tache updateStatus(@PathVariable(value = "userId") int userId,
+        @PathVariable(value = "tacheId") int tacheId, @Valid @RequestBody Tache tacheRequest)
+    throws ResourceNotFoundException {
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("userId non trouvé");
+        }
+
+        return tacheRepository.findById(tacheId).map(tache -> {
+            tache.setStatus(!tacheRequest.getStatus());
             return tacheRepository.save(tache);
         }).orElseThrow(() -> new ResourceNotFoundException("tache.id non trouvée"));
     }
@@ -70,47 +83,5 @@ public class TacheController {
         }).orElseThrow(() -> new ResourceNotFoundException(
             "Tache non trouvée avec l'id " + tacheId + " et userId " + userId));
     }
-
-    /* @RequestMapping("/taches")
-    public List<Tache> getTaches(){
-        return (List<Tache>) tacheRepository.findAll(Sort.by("id").descending());
-    }
-    
-    @GetMapping("/tache/{id}")
-    public Tache getTache(@PathVariable Integer id){
-       return tacheRepository.findById(id).orElse(null);
-
-    }
-
-    @RequestMapping(method = RequestMethod.DELETE, value = "tache/{id}")
-    public void deleteTache(@PathVariable int id){
-        tacheRepository.deleteById(id);
-    }
-
-    @RequestMapping(method = RequestMethod.POST,value = "/taches")
-    public void addTache(@RequestBody Tache tache){
-        tacheRepository.save(tache);
-    }
-
-    @RequestMapping(method = RequestMethod.PUT,value="/tache/{id}")
-    public void updateTache(@RequestBody Tache tache, @PathVariable int id){
-
-        Tache tacheToFind = tacheRepository.findById(id).orElse(null);
-        if (tacheToFind != null){
-            tacheToFind.setTitle(tache.getTitle());
-            tacheToFind.setDescription(tache.getDescription());
-            tacheRepository.save(tacheToFind);
-        }
-    }
-    @RequestMapping(method = RequestMethod.PUT,value="/status/{id}")
-    public void updateStatus(@RequestBody Tache tache, @PathVariable int id){
-
-        Tache tacheToFind = tacheRepository.findById(id).orElse(null);
-        if (tacheToFind != null){
-            
-            tacheToFind.setStatus(!tache.getStatus());
-            tacheRepository.save(tacheToFind);
-        }
-    } */
 
 }

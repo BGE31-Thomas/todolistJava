@@ -10,8 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
@@ -30,7 +29,7 @@ public class Utilisateur implements Serializable{
     @OneToMany(mappedBy="utilisateur",cascade = {
         CascadeType.ALL
     })
-  
+    @JsonIgnore
     public List<Tache> taches;
 
     public Utilisateur(int id, String name, String email, String password, List<Tache> taches) {

@@ -6,6 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Tache extends Utilisateur{
 
@@ -24,7 +26,9 @@ public class Tache extends Utilisateur{
 
     public Boolean status;
 
+
     @ManyToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
     public Utilisateur utilisateur;
 
     public Tache(int id,String description,String title,Boolean status,Utilisateur utilisateur){
