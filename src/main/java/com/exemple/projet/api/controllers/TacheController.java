@@ -36,6 +36,12 @@ public class TacheController {
         return tacheRepository.findByUtilisateurId(userId,Sort.by("id").descending());
     }
 
+    @GetMapping("/taches/{tacheId}")
+    public Tache getTacheById(@PathVariable(value = "tacheId") int tacheId) throws ResourceNotFoundException {
+        return tacheRepository.findById(tacheId).orElseThrow(() -> new ResourceNotFoundException("tâche non trouvée"));
+    }
+
+
     @PostMapping("/users/{userId}/taches")
     public Tache createTache(@PathVariable(value = "userId") int userId,
         @Valid @RequestBody Tache tache) throws ResourceNotFoundException {
@@ -74,14 +80,9 @@ public class TacheController {
         }).orElseThrow(() -> new ResourceNotFoundException("tache.id non trouvée"));
     }
 
-    @DeleteMapping("/users/{userId}/taches/{tacheId}")
-    public ResponseEntity <?> deleteTache(@PathVariable(value = "userId") int userId,
-        @PathVariable(value = "tacheId") int tacheId) throws ResourceNotFoundException {
-        return tacheRepository.findByIdAndUtilisateurId(tacheId, userId).map(tache -> {
-            tacheRepository.delete(tache);
-            return ResponseEntity.ok().build();
-        }).orElseThrow(() -> new ResourceNotFoundException(
-            "Tache non trouvée avec l'id " + tacheId + " et userId " + userId));
+    @DeleteMapping("taches/{id}")
+    public void deleteTache(@PathVariable int id){
+        tacheRepository.deleteById(id);
     }
 
 }

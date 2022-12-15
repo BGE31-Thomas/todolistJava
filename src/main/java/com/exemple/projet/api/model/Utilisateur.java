@@ -1,9 +1,6 @@
 package com.exemple.projet.api.model;
 
-import java.io.Serializable;
 import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
-public class Utilisateur implements Serializable{
+public class Utilisateur {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,9 +23,7 @@ public class Utilisateur implements Serializable{
     public String password;
 
 
-    @OneToMany(mappedBy="utilisateur",cascade = {
-        CascadeType.ALL
-    })
+    @OneToMany(mappedBy="utilisateur")
     @JsonIgnore
     public List<Tache> taches;
 

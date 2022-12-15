@@ -34,9 +34,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity  <Utilisateur> getUtilisateurById(
+    public ResponseEntity  <Utilisateur> getUtilisateur(
         @RequestBody Utilisateur sendUser) throws ResourceNotFoundException {
-        Utilisateur user = userRepository.findByNameAndPassword(sendUser.name, sendUser.password)
+        Utilisateur user = userRepository.findByEmailAndPassword(sendUser.email, sendUser.password)
             .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé"));
         return ResponseEntity.ok().body(user);
     }
@@ -47,7 +47,7 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}")
-    public ResponseEntity < Utilisateur > updateUser(
+    public ResponseEntity <Utilisateur> updateUser(
         @PathVariable(value = "id") int userId,
         @Valid @RequestBody Utilisateur userDetails) throws ResourceNotFoundException {
         Utilisateur user = userRepository.findById(userId)

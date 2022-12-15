@@ -1,5 +1,4 @@
 package com.exemple.projet.api.model;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,7 +26,7 @@ public class Tache extends Utilisateur{
     public Boolean status;
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JsonIgnore
     public Utilisateur utilisateur;
 
