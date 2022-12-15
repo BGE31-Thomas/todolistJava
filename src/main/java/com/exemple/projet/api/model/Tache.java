@@ -1,12 +1,13 @@
 package com.exemple.projet.api.model;
-
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
-public class Tache {
+public class Tache extends Utilisateur{
 
     @Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,13 +24,17 @@ public class Tache {
 
     public Boolean status;
 
-    
-    public Tache(int id, String description, String title, Boolean status) {
+    @ManyToOne(cascade = CascadeType.ALL)
+    public Utilisateur utilisateur;
+
+    public Tache(int id,String description,String title,Boolean status,Utilisateur utilisateur){
         this.id = id;
         this.description = description;
         this.title = title;
         this.status = status;
+        this.utilisateur = utilisateur;
     }
+
     public Tache() {
     }
     public String getDescription() {
@@ -49,6 +54,12 @@ public class Tache {
     }
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+    public Utilisateur getUtilisateur() {
+        return utilisateur;
+    }
+    public void setUtilisateur(Utilisateur utilisateur) {
+        this.utilisateur = utilisateur;
     }
     
     
