@@ -6,7 +6,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,17 +30,20 @@ public class TacheController {
     @Autowired
     private UserRepository userRepository;
 
+    //Récupère les tâches d'un utilisateur (id de l'utilisateur)
     @GetMapping("/users/{userId}/taches")
     public List <Tache> getTachesByUtilisateur(@PathVariable(value = "userId") int userId) {
         return tacheRepository.findByUtilisateurId(userId,Sort.by("id").descending());
     }
 
+    //Récupère la tâche ciblée (id de la tâche à récupérer)
     @GetMapping("/taches/{tacheId}")
     public Tache getTacheById(@PathVariable(value = "tacheId") int tacheId) throws ResourceNotFoundException {
         return tacheRepository.findById(tacheId).orElseThrow(() -> new ResourceNotFoundException("tâche non trouvée"));
     }
 
 
+    //Crée une tâche (id de l'utilisateur) body:Tâche à créer
     @PostMapping("/users/{userId}/taches")
     public Tache createTache(@PathVariable(value = "userId") int userId,
         @Valid @RequestBody Tache tache) throws ResourceNotFoundException {
@@ -51,6 +53,7 @@ public class TacheController {
         }).orElseThrow(() -> new ResourceNotFoundException("utilisateur non trouvé"));
     }
 
+    //Modifie une tâche (id de l'utilisateur,is de la tâche) body: tâche à modifier
     @PutMapping("/users/{userId}/taches/{tacheId}")
     public Tache updateTache(@PathVariable(value = "userId") int userId,
         @PathVariable(value = "tacheId") int tacheId, @Valid @RequestBody Tache tacheRequest)
@@ -66,6 +69,7 @@ public class TacheController {
         }).orElseThrow(() -> new ResourceNotFoundException("tache.id non trouvée"));
     }
 
+    //Modifie le statut d'une tâche (id le l'utilisateur, id de la tâche) body :Tâche à modifier
     @PutMapping("/status/{userId}/{tacheId}")
     public Tache updateStatus(@PathVariable(value = "userId") int userId,
         @PathVariable(value = "tacheId") int tacheId, @Valid @RequestBody Tache tacheRequest)
@@ -80,6 +84,7 @@ public class TacheController {
         }).orElseThrow(() -> new ResourceNotFoundException("tache.id non trouvée"));
     }
 
+    //Supprime la tâche (id de la tâche à supprimer)
     @DeleteMapping("taches/{id}")
     public void deleteTache(@PathVariable int id){
         tacheRepository.deleteById(id);
