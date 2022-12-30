@@ -6,46 +6,71 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 
+import com.exemple.projet.api.exceptions.ResourceNotFoundException;
 import com.exemple.projet.api.model.Tache;
 import com.exemple.projet.api.model.Utilisateur;
+import com.exemple.projet.api.service.TacheService;
+import com.exemple.projet.api.service.UserService;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class ProjetApplicationTests {
 
 	@Autowired
-	private TestRestTemplate restTemplate;
+	private UserService userService;
+
+	@Autowired
+	private TacheService tacheService;
 
 	private Utilisateur user = new Utilisateur("Thomas", "thomas@mail.com","thomas");
+
+	private Tache tache = new Tache("Description","Titre");
 	
 	@Test
 	void registerUser() {
 		
-		ResponseEntity<Utilisateur> savedUser = this.restTemplate.postForEntity("/users", user, Utilisateur.class);
-		assertEquals(savedUser.getBody().getEmail(),user.getEmail());
+		Utilisateur savedUser = this.userService.createUser(this.user);
+		assertEquals(savedUser.getEmail(),user.getEmail());
 	}
 
 	@Test
-	void login() {
-		
-		ResponseEntity<Utilisateur> savedUser = this.restTemplate.postForEntity("/login", user, Utilisateur.class);
-		assertEquals(savedUser.getBody().getEmail(),user.getEmail());
-		this.user = savedUser.getBody();
+	void login() throws ResourceNotFoundException {
+		ResponseEntity<Utilisateur> signedInUser = this.userService.getUtilisateur(this.user);
+		if (signedInUser.getBody() != null){
+			assertEquals(signedInUser.getBody().getEmail(),user.getEmail());
+			this.user = signedInUser.getBody();
+		}
+
 	}
 
 	@Test
-	void createdTache(){
+	void createTache() throws ResourceNotFoundException{
 		login();
-		Tache tache = new Tache("Titre","Description");
+		
 		Integer userId = this.user.id;
-		if (userId != null){
-			ResponseEntity<Tache> createdTache = this.restTemplate.postForEntity("/users/{userId}/taches",tache, Tache.class,userId);
-			assertEquals(createdTache.getBody().getTitle(),tache.getTitle());
+		if (userId != 0){
+			Tache createdTache = this.tacheService.createTache(userId, tache);
+			assertEquals(createdTache.getTitle(),tache.getTitle());
+			this.tache = createdTache;
 		}
 		
+	}
+
+	@Test
+	void getTache() throws ResourceNotFoundException{
+		createTache();
+		Tache sentTache = this.tacheService.getTacheById(this.tache.getId());
+		assertEquals(this.tache.getId(),sentTache.getId());
+	}
+
+	@Test
+	void modifyTache() throws ResourceNotFoundException{
+		createTache();
+		Tache tacheToSend = new Tache("Description","Nouveau titre");
+		Tache modifiedTache = this.tacheService.updateTache(this.user.id, this.tache.getId(), tacheToSend);
+		assertEquals(tacheToSend.getTitle(), modifiedTache.getTitle());
 	}
 
 
