@@ -28,6 +28,7 @@ class ProjetApplicationTests {
 
 	private Tache tache = new Tache("Description","Titre");
 	
+	//Test de la méthode d'enregistreemnt d'un utilisateur
 	@Test
 	void registerUser() {
 		
@@ -35,6 +36,7 @@ class ProjetApplicationTests {
 		assertEquals(savedUser.getEmail(),user.getEmail());
 	}
 
+	//Test de la méthode de connexion
 	@Test
 	void login() throws ResourceNotFoundException {
 		ResponseEntity<Utilisateur> signedInUser = this.userService.getUtilisateur(this.user);
@@ -45,6 +47,7 @@ class ProjetApplicationTests {
 
 	}
 
+	//test de la méthode pour la création d'une tâche
 	@Test
 	void createTache() throws ResourceNotFoundException{
 		login();
@@ -58,6 +61,7 @@ class ProjetApplicationTests {
 		
 	}
 
+	//Test de la méthode de récupération d'une tâche
 	@Test
 	void getTache() throws ResourceNotFoundException{
 		createTache();
@@ -65,12 +69,22 @@ class ProjetApplicationTests {
 		assertEquals(this.tache.getId(),sentTache.getId());
 	}
 
+	//Test de la méthode pour modifier une tâche
 	@Test
 	void modifyTache() throws ResourceNotFoundException{
 		createTache();
 		Tache tacheToSend = new Tache("Description","Nouveau titre");
 		Tache modifiedTache = this.tacheService.updateTache(this.user.id, this.tache.getId(), tacheToSend);
 		assertEquals(tacheToSend.getTitle(), modifiedTache.getTitle());
+	}
+
+	//Test de la méthode de modification du statut
+	@Test
+	void modifyStatus() throws ResourceNotFoundException{
+		createTache();
+		this.tache.setStatus(false);
+		Tache modifiedTache = this.tacheService.updateStatus(this.user.id, this.tache.getId(), this.tache);
+		assertEquals(!this.tache.getStatus(), modifiedTache.getStatus());
 	}
 
 
