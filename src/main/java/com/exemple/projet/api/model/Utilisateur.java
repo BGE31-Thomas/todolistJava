@@ -27,6 +27,11 @@ public class Utilisateur {
     @JsonIgnore
     public List<Tache> taches;
 
+    public Utilisateur(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
     public Utilisateur(int id, String name, String email, String password, List<Tache> taches) {
         this.id = id;
         this.name = name;

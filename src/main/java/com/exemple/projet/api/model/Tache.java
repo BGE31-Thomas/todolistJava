@@ -38,6 +38,13 @@ public class Tache extends Utilisateur{
         this.utilisateur = utilisateur;
     }
 
+    public Tache(String description,String title){
+       
+        this.description = description;
+        this.title = title;
+
+    }
+
     public Tache() {
     }
     public String getDescription() {

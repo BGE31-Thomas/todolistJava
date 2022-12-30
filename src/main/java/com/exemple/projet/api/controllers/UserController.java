@@ -11,27 +11,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.exemple.projet.api.exceptions.ResourceNotFoundException;
 import com.exemple.projet.api.model.Utilisateur;
-import com.exemple.projet.repository.UserRepository;
+import com.exemple.projet.api.service.UserService;
 
 @CrossOrigin(origins="*")
 @RestController
 public class UserController {
+
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
+
 
     //Permet de se connecter en renvoyant le bon utilisateur body:utilisateur
     @PostMapping("/login")
-    public ResponseEntity  <Utilisateur> getUtilisateur(
-        @RequestBody Utilisateur sendUser) throws ResourceNotFoundException {
-        Utilisateur user = userRepository.findByEmailAndPassword(sendUser.email, sendUser.password)
-            .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé"));
-        return ResponseEntity.ok().body(user);
+    public ResponseEntity  <Utilisateur> getUtilisateur(@RequestBody Utilisateur sendUser) throws ResourceNotFoundException{
+        return userService.getUtilisateur(sendUser);
     }
 
     //Crée un nouvel utilisateur body:utilisateur
     @PostMapping("/users")
     public Utilisateur createUser(@Valid @RequestBody Utilisateur user) {
-        return userRepository.save(user);
+        return userService.createUser(user);
     }
 
     
